@@ -1,8 +1,6 @@
-from studentFile import StudentFileReader
+from studentFile import StudentFileReader, StudentFileWriter, StudentRecord
 
 fileName = "text.txt"
-
-
 def main():
     # open the file and reading from the file
     file = StudentFileReader(fileName)
@@ -10,8 +8,24 @@ def main():
     records = file.fetchAll()
     file.close()
 
-    records.sort(key=lambda x: x._classID)  # key = id of the object
-    printRecord(records)
+    records.sort(key=lambda x: x.classID)  # key = id of the object
+    while True:
+        choice =   input("Choose your options: (1) Print out data (2) Add new students(3) Exit the program :").strip()
+        if choice == "1":
+            printRecord(records)
+        elif choice == "2":
+            addStudents()
+            file.open()
+            records = file.fetchAll()
+            file.close()
+            printRecord(records)
+        elif choice == "3":
+            break
+        else:
+            print("Invalid input")
+
+
+
 
 
 def printRecord(records):
@@ -24,15 +38,35 @@ def printRecord(records):
     # table body
     for record in records:
         print("%-5d %-25s %-10s %-4.2f" % \
-              (record._id, \
-               record._lastName + ', ' + record._firstName,  # Concatenate first and last name
-               className[record._classID],  # Use className to get class name based on ID
-               record._GPA))
+              (record.id, \
+               record.lastName + ', ' + record.firstName,  # Concatenate first and last name
+               className[record.classID],  # Use className to get class name based on ID
+               record.GPA))
 
     # table footer
     print("_" * 50)
     print("Number of students:", len(records))
+def addStudents():
+    studentId = int(input("Enter Student ID: "))
+    firstName = input("Enter First Name : ")
+    lastName = input("Enter Last Name : ")
+    classID = int(input("Enter Class ID: "))
+    GPA = float(input("Enter Student GPA: "))
+    newStudent = StudentRecord(studentId, firstName,lastName, classID, GPA)
+    file = StudentFileWriter(fileName)
+    file.open()
+    file.writeRecord(newStudent)
+    file.close()
+    print("Successfully added new student.")
 
 
-main()
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    main()
 
